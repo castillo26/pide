@@ -54,8 +54,10 @@
                     resultadoDiv.className = 'resultado success';
                     resultadoTitulo.textContent = 'Consulta Exitosa';
 
-                    if (resultado.data && resultado.data.respuestaTitularidad) {
-                        const items = resultado.data.respuestaTitularidad.respuestaTitularidad;
+                    // Estructura: data.buscarTitularidadSIRSARPResponse.respuestaTitularidad.respuestaTitularidad
+                    if (resultado.data && resultado.data.buscarTitularidadSIRSARPResponse) {
+                        const respuesta = resultado.data.buscarTitularidadSIRSARPResponse.respuestaTitularidad;
+                        const items = respuesta.respuestaTitularidad;
                         const lista = Array.isArray(items) ? items : [items];
 
                         let html = '';
@@ -66,7 +68,12 @@
                             html += `<p><strong>Nombre:</strong> ${item.apPaterno || ''} ${item.apMaterno || ''} ${item.nombre || ''}</p>`;
                             html += `<p><strong>Documento:</strong> ${item.tipoDocumento || 'N/A'} - ${item.numeroDocumento || 'N/A'}</p>`;
                             html += `<p><strong>Partida:</strong> ${item.numeroPartida || 'N/A'}</p>`;
-                            html += `<p><strong>Placa:</strong> ${item.numeroPlaca || 'N/A'}</p>`;
+                            if (item.numeroPlaca) {
+                                html += `<p><strong>Placa:</strong> ${item.numeroPlaca}</p>`;
+                            }
+                            if (item.direccion) {
+                                html += `<p><strong>Dirección:</strong> ${item.direccion}</p>`;
+                            }
                             html += `<p><strong>Estado:</strong> ${item.estado || 'N/A'}</p>`;
                             html += `<p><strong>Zona:</strong> ${item.zona || 'N/A'}</p>`;
                             html += `<p><strong>Oficina:</strong> ${item.oficina || 'N/A'}</p>`;
@@ -79,7 +86,11 @@
                 } else {
                     resultadoDiv.className = 'resultado error';
                     resultadoTitulo.textContent = 'Error en la consulta';
-                    resultadoContenido.innerHTML = '<p>' + (resultado.error || 'Error desconocido') + '</p>';
+                    let errorMsg = '<p><strong>' + (resultado.error || 'Error desconocido') + '</strong></p>';
+                    if (resultado.status_code) {
+                        errorMsg += '<p>Código de estado: ' + resultado.status_code + '</p>';
+                    }
+                    resultadoContenido.innerHTML = errorMsg;
                 }
             } catch (error) {
                 resultadoDiv.style.display = 'block';

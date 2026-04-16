@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from .services import consultar_tsirsarp
+from .services import consultar_tsirsarp, consultar_lasirsarp
 
 
 def consulta_tsirsarp_form(request):
@@ -11,6 +11,49 @@ def consulta_tsirsarp_form(request):
     Muestra el formulario de consulta TSIRSARP
     """
     return render(request, 'sunarp/consulta.html')
+
+
+def consulta_lasirsarp_form(request):
+    """
+    Muestra el formulario de consulta LASIRSARP
+    """
+    return render(request, 'sunarp/consulta_lasirsarp.html')
+
+
+@csrf_exempt
+def consultar_lasirsarp_view(request):
+    """
+    View para consultar el servicio LASIRSARP de SUNARP.
+
+    Método: POST
+    Body (JSON):
+    {
+        "usuario": "tu_usuario",
+        "clave": "tu_clave",
+        "zona": "1",
+        "oficina": "1",
+        "partida": "12345678",
+        "registro": "21000"  // 21000=Propiedad inmueble, 22000=Personas jurídicas, 23000=Personas naturales
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_lasirsarp(
+        usuario=data.get("usuario", ""),
+        clave=data.get("clave", ""),
+        zona=data.get("zona", ""),
+        oficina=data.get("oficina", ""),
+        partida=data.get("partida", ""),
+        registro=data.get("registro", "")
+    )
+
+    return JsonResponse(resultado, safe=False)
 
 
 @csrf_exempt
