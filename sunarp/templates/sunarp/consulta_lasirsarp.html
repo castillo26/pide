@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta SUNARP - LASIRSARP</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+</head>
+<body>
+    <h1>Consulta SUNARP - LASIRSARP</h1>
+    <p class="subtitle">Listar Asientos de una Partida Registral</p>
+
+    <div class="form-container">
+        <form id="consultaForm">
+            <div class="form-group">
+                <label for="registro">Tipo de Registro:</label>
+                <select id="registro" name="registro" required>
+                    <option value="">Seleccione un tipo de registro</option>
+                    <option value="21000">Propiedad Inmueble (21000)</option>
+                    <option value="22000">Personas Jurídicas (22000)</option>
+                    <option value="23000">Personas Naturales (23000)</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="zona">Zona Registral:</label>
+                    <input type="text" id="zona" name="zona" placeholder="Ej: 1" required>
+                </div>
+                <div class="col form-group">
+                    <label for="oficina">Oficina Registral:</label>
+                    <input type="text" id="oficina" name="oficina" placeholder="Ej: 1" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="partida">Número de Partida:</label>
+                <input type="text" id="partida" name="partida" placeholder="Ej: 12345678" required>
+                <small class="help-text">Número de partida obtenido del método TSIRSARP</small>
+            </div>
+
+            <button type="submit" id="btnConsultar">
+                Consultar Asientos
+            </button>
+        </form>
+    </div>
+
+    <div id="resultado" class="resultado">
+        <h3 id="resultadoTitulo"></h3>
+        <div id="resultadoContenido"></div>
+    </div>
+
+    <script src="{% static 'sunarp/js/lasirsarp.js' %}"></script>
+</body>
+</html>
