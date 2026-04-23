@@ -90,15 +90,9 @@ def consultar_lasirsarp(
         return {"success": False, "error": str(e)}
 
 
-def consultar_tsirsarp(
-    usuario: str = None,
-    clave: str = None,
-    tipo_participante: str = "N",
-    apellido_paterno: str = "",
-    apellido_materno: str = "",
-    nombres: str = "",
-    razon_social: str = ""
-):
+def consultar_tsirsarp(usuario: str = None,clave: str = None,tipo_participante: str = "N",apellido_paterno: str = "", apellido_materno: str = "",
+    nombres: str = "",razon_social: str = ""
+    ):
     """
     Consulta al servicio TSIRSARP de SUNARP.
 

@@ -46,47 +46,51 @@ document.getElementById('consultaForm').addEventListener('submit', async functio
             resultadoDiv.className = 'resultado success';
             resultadoTitulo.textContent = 'Consulta Exitosa';
 
-            if (resultado.data && resultado.data.asientos) {
-                const asientos = resultado.data.asientos;
-                let html = '<div class="asientos-container">';
+            if (resultado.data) {
+                let listaAsientos = null;
+                let infoGeneral = {};
 
-                // Información general
-                if (asientos.transaccion) {
-                    html += `<div class="info-general">`;
-                    html += `<p><strong>Transacción:</strong> ${asientos.transaccion}</p>`;
-                    if (asientos.nroTotalPag) {
-                        html += `<p><strong>Total de Páginas:</strong> ${asientos.nroTotalPag}</p>`;
-                    }
-                    html += '</div>';
+                // listarAsientosSIRSARPResponse.asientos.listAsientos
+                if (resultado.data.listarAsientosSIRSARPResponse &&
+                    resultado.data.listarAsientosSIRSARPResponse.asientos &&
+                    resultado.data.listarAsientosSIRSARPResponse.asientos.listAsientos) {
+                    listaAsientos = resultado.data.listarAsientosSIRSARPResponse.asientos.listAsientos;
+                    infoGeneral = {
+                        transaccion: resultado.data.listarAsientosSIRSARPResponse.asientos.transaccion,
+                        nroTotalPag: resultado.data.listarAsientosSIRSARPResponse.asientos.nroTotalPag
+                    };
                 }
 
-                // Lista de asientos
-                if (asientos.listAsientos && asientos.listAsientos.length > 0) {
-                    html += '<h4>Lista de Asientos:</h4>';
-                    asientos.listAsientos.forEach((asiento, index) => {
+                if (listaAsientos && listaAsientos.length > 0) {
+                    let html = '';
+                    listaAsientos.forEach((asiento, index) => {
                         html += '<div class="data-item">';
                         html += `<p><strong>Asiento #${index + 1}</strong></p>`;
                         html += `<p><strong>ID Imagen:</strong> ${asiento.idImgAsiento || 'N/A'}</p>`;
                         html += `<p><strong>Número de Páginas:</strong> ${asiento.numPag || 'N/A'}</p>`;
                         html += `<p><strong>Tipo:</strong> ${asiento.tipo || 'N/A'}</p>`;
+                        if (infoGeneral.transaccion) {
+                            html += `<p><strong>Transacción:</strong> ${infoGeneral.transaccion}</p>`;
+                        }
+                        if (infoGeneral.nroTotalPag) {
+                            html += `<p><strong>Total de Páginas:</strong> ${infoGeneral.nroTotalPag}</p>`;
+                        }
 
-                        // Lista de páginas del asiento
-                        if (asiento.listPag && asiento.listPag.length > 0) {
-                            html += '<div class="paginas-list">';
-                            html += '<p><strong>Páginas:</strong></p><ul>';
-                            asiento.listPag.forEach((pag) => {
+                        // listPag puede ser un objeto único o un array
+                        const paginas = Array.isArray(asiento.listPag) ? asiento.listPag : (asiento.listPag ? [asiento.listPag] : []);
+                        if (paginas.length > 0) {
+                            html += '<p><strong>Páginas:</strong></p><ol>';
+                            paginas.forEach((pag) => {
                                 html += `<li>Página ${pag.pagina || 'N/A'} (Ref: ${pag.nroPagRef || 'N/A'})</li>`;
                             });
-                            html += '</ul></div>';
+                            html += '</ol>';
                         }
                         html += '</div>';
                     });
+                    resultadoContenido.innerHTML = html;
                 } else {
-                    html += '<p>No se encontraron asientos para esta partida.</p>';
+                    resultadoContenido.innerHTML = '<pre>' + JSON.stringify(resultado.data, null, 2) + '</pre>';
                 }
-
-                html += '</div>';
-                resultadoContenido.innerHTML = html;
             } else {
                 // Mostrar respuesta completa si no tiene la estructura esperada
                 resultadoContenido.innerHTML = '<pre>' + JSON.stringify(resultado, null, 2) + '</pre>';

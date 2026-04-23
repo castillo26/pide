@@ -22,14 +22,20 @@
             const resultadoTitulo = document.getElementById('resultadoTitulo');
             const resultadoContenido = document.getElementById('resultadoContenido');
 
+            // Función para reemplazar Ñ por N
+            const normalizarTexto = (texto) => {
+                if (!texto) return texto;
+                return texto.replace(/ñ/gi, 'n');
+            };
+
             // Obtener valores del formulario
             const tipo = document.getElementById('tipo_participante').value;
             const data = {
                 tipo_participante: tipo,
-                apellido_paterno: document.getElementById('apellido_paterno').value,
-                apellido_materno: document.getElementById('apellido_materno').value,
-                nombres: document.getElementById('nombres').value,
-                razon_social: document.getElementById('razon_social').value
+                apellido_paterno: normalizarTexto(document.getElementById('apellido_paterno').value),
+                apellido_materno: normalizarTexto(document.getElementById('apellido_materno').value),
+                nombres: normalizarTexto(document.getElementById('nombres').value),
+                razon_social: normalizarTexto(document.getElementById('razon_social').value)
             };
 
             // Mostrar estado de carga
