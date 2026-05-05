@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from .services import consultar_tsirsarp, consultar_lasirsarp
+from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_vasirsarp, consultar_goficina
 
 
 def consulta_tsirsarp_form(request):
@@ -18,6 +18,13 @@ def consulta_lasirsarp_form(request):
     Muestra el formulario de consulta LASIRSARP
     """
     return render(request, 'sunarp/consulta_lasirsarp.html')
+
+
+def consulta_vasirsarp_form(request):
+    """
+    Muestra el formulario de consulta VASIRSARP
+    """
+    return render(request, 'sunarp/consulta_vasirsarp.html')
 
 
 @csrf_exempt
@@ -89,6 +96,79 @@ def consultar_tsirsarp_view(request):
         apellido_materno=data.get("apellido_materno", ""),
         nombres=data.get("nombres", ""),
         razon_social=data.get("razon_social", "")
+    )
+
+    return JsonResponse(resultado, safe=False)
+
+
+@csrf_exempt
+def consultar_vasirsarp_view(request):
+    """
+    View para consultar el servicio VASIRSARP de SUNARP.
+
+    Método: POST
+    Body (JSON):
+    {
+        "transaccion": "...",
+        "idImg": "...",
+        "tipo": "...",
+        "nroTotalPag": "...",
+        "nroPagRef": "...",
+        "pagina": "..."
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_vasirsarp(
+        usuario=data.get("usuario", ""),
+        clave=data.get("clave", ""),
+        transaccion=data.get("transaccion", ""),
+        idImg=data.get("idImg", ""),
+        tipo=data.get("tipo", ""),
+        nroTotalPag=data.get("nroTotalPag", ""),
+        nroPagRef=data.get("nroPagRef", ""),
+        pagina=data.get("pagina", "")
+    )
+
+    return JsonResponse(resultado, safe=False)
+
+
+def consulta_goficina_form(request):
+    """
+    Muestra el formulario de consulta GOFICINA
+    """
+    return render(request, 'sunarp/consulta_goficina.html')
+
+
+@csrf_exempt
+def consultar_goficina_view(request):
+    """
+    View para consultar el servicio GOFICINA de SUNARP.
+
+    Método: POST
+    Body (JSON):
+    {
+        "usuario": "tu_usuario",    // opcional, usa .env si no se envía
+        "clave": "tu_clave"         // opcional, usa .env si no se envía
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_goficina(
+        usuario=data.get("usuario", ""),
+        clave=data.get("clave", "")
     )
 
     return JsonResponse(resultado, safe=False)
