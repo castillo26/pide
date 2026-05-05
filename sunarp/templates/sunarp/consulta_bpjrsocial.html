@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta SUNARP - BPJRSocial</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+</head>
+<body>
+    <h1>Consulta SUNARP - BPJRSocial</h1>
+    <p class="subtitle">Búsqueda de Persona Jurídica por Razón Social</p>
+
+    <div class="form-container">
+        <form id="consultaForm">
+            <div class="form-group">
+                <label for="razon_social">Razón Social:</label>
+                <input type="text" id="razon_social" name="razon_social" placeholder="Ej: EMPRESA EJEMPLO SAC" required>
+                <small class="help-text">Nombre completo o parcial de la razón social a buscar</small>
+            </div>
+
+            <button type="submit" id="btnConsultar">
+                Consultar
+            </button>
+        </form>
+    </div>
+
+    <div id="resultado" class="resultado">
+        <h3 id="resultadoTitulo"></h3>
+        <div id="resultadoContenido"></div>
+    </div>
+
+    <script src="{% static 'sunarp/js/bpjrsocial.js' %}"></script>
+</body>
+</html>
