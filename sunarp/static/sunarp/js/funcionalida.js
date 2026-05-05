@@ -81,7 +81,7 @@
                                 html += `<p><strong>Dirección:</strong> ${item.direccion}</p>`;
                             }
                             html += `<p><strong>Estado:</strong> ${item.estado || 'N/A'}</p>`;
-                            html += `<p><strong>Zona:</strong> ${item.zona || 'N/A'}</p>`;
+                            html += `<p><strong>Zona:</strong> ${item.zona || 'N/A'}</p>`; 
                             html += `<p><strong>Oficina:</strong> ${item.oficina || 'N/A'}</p>`;
                             html += '</div>';
                         });

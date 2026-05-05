@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta SUNARP - VASIRSARP</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+</head>
+<body>
+    <h1>Consulta SUNARP - VASIRSARP</h1>
+    <p class="subtitle">Visualizar Asiento Registral - Imagen</p>
+
+    <div class="form-container">
+        <form id="consultaForm">
+            <div class="form-group">
+                <label for="transaccion">Transacción:</label>
+                <input type="text" id="transaccion" name="transaccion" placeholder="Ej: 0104P18029101210000018" required>
+                <small class="help-text">Obtenido del método LASIRSARP</small>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="idImg">ID Imagen:</label>
+                    <input type="text" id="idImg" name="idImg" placeholder="Ej: 0" required>
+                </div>
+                <div class="col form-group">
+                    <label for="tipo">Tipo:</label>
+                    <input type="text" id="tipo" name="tipo" placeholder="Ej: ASIENTO" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col form-group">
+                    <label for="nroTotalPag">Número Total de Páginas:</label>
+                    <input type="text" id="nroTotalPag" name="nroTotalPag" placeholder="Ej: 4" required>
+                </div>
+                <div class="col form-group">
+                    <label for="nroPagRef">Número de Página de Referencia:</label>
+                    <input type="text" id="nroPagRef" name="nroPagRef" placeholder="Ej: 1" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="pagina">Número de Página:</label>
+                <input type="text" id="pagina" name="pagina" placeholder="Ej: 1" required>
+                <small class="help-text">Obtenido del método LASIRSARP</small>
+            </div>
+
+            <button type="submit" id="btnConsultar">
+                Ver Imagen
+            </button>
+        </form>
+    </div>
+
+    <div id="resultado" class="resultado">
+        <h3 id="resultadoTitulo"></h3>
+        <div id="resultadoContenido"></div>
+    </div>
+
+    <script src="{% static 'sunarp/js/vasirsarp.js' %}"></script>
+</body>
+</html>

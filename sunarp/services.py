@@ -90,6 +90,76 @@ def consultar_lasirsarp(
         return {"success": False, "error": str(e)}
 
 
+def consultar_vasirsarp(
+    usuario: str = None,
+    clave: str = None,
+    transaccion: str = "",
+    idImg: str = "",
+    tipo: str = "",
+    nroTotalPag: str = "",
+    nroPagRef: str = "",
+    pagina: str = ""
+):
+    """
+    Consulta al servicio VASIRSARP de SUNARP para visualizar una imagen.
+    """
+    if not usuario:
+        usuario = os.getenv("SUNARP_USUARIO", "")
+    if not clave:
+        clave = os.getenv("SUNARP_CLAVE", "")
+
+    url = "https://ws2.pide.gob.pe/Rest/SUNARP/VASIRSARP?out=json"
+
+    payload = {
+        "PIDE": {
+            "usuario": usuario,
+            "clave": clave,
+            "transaccion": transaccion,
+            "idImg": idImg,
+            "tipo": tipo,
+            "nroTotalPag": nroTotalPag,
+            "nroPagRef": nroPagRef,
+            "pagina": pagina
+        }
+    }
+
+    headers = {
+        "Content-Type": "application/json; charset=UTF-8"
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
+
+        resultado = {
+            "success": response.status_code == 200,
+            "status_code": response.status_code,
+            "response": response.text
+        }
+
+        try:
+            resultado["data"] = response.json()
+        except:
+            resultado["data"] = None
+
+        if response.status_code != 200:
+            import re
+            fault_match = re.search(r'<faultstring>(.*?)</faultstring>', response.text)
+            if fault_match:
+                resultado["error"] = fault_match.group(1)
+            else:
+                resultado["error"] = f"Error HTTP {response.status_code}"
+
+        return resultado
+
+    except requests.exceptions.Timeout:
+        return {"success": False, "error": "Timeout: el servidor tardó demasiado en responder"}
+    except requests.exceptions.ConnectionError:
+        return {"success": False, "error": "Error de conexión: no se pudo contactar al servidor"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+
 def consultar_tsirsarp(usuario: str = None,clave: str = None,tipo_participante: str = "N",apellido_paterno: str = "", apellido_materno: str = "",
     nombres: str = "",razon_social: str = ""
     ):
@@ -147,6 +217,77 @@ def consultar_tsirsarp(usuario: str = None,clave: str = None,tipo_participante: 
 
         # Si hay error del servidor, extraer mensaje del XML
         if response.status_code != 200:
+            import re
+            fault_match = re.search(r'<faultstring>(.*?)</faultstring>', response.text)
+            if fault_match:
+                resultado["error"] = fault_match.group(1)
+            else:
+                resultado["error"] = f"Error HTTP {response.status_code}"
+
+        return resultado
+
+    except requests.exceptions.Timeout:
+        return {"success": False, "error": "Timeout: el servidor tardó demasiado en responder"}
+    except requests.exceptions.ConnectionError:
+        return {"success": False, "error": "Error de conexión: no se pudo contactar al servidor"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def consultar_goficina(
+    usuario: str = None,
+    clave: str = None
+):
+    """
+    Consulta al servicio GOOFICINA de SUNARP para obtener la lista de oficinas registrales.
+
+    Parámetros:
+    - usuario: Usuario proporcionado por SUNARP (obligatorio)
+    - clave: Password proporcionado por SUNARP (obligatorio)
+
+    Retorna:
+    - codZona: Código de zona registral
+    - codOficina: Código de oficina registral
+    - descripcion: Nombre de la oficina registral
+    """
+    if not usuario:
+        usuario = os.getenv("SUNARP_USUARIO", "")
+    if not clave:
+        clave = os.getenv("SUNARP_CLAVE", "")
+
+    url = "https://ws2.pide.gob.pe/Rest/SUNARP/GOficina"
+
+    params = {
+        "usuario": usuario,
+        "clave": clave,
+        "out": "json"
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=30)
+
+        resultado = {
+            "success": response.status_code == 200,
+            "status_code": response.status_code,
+            "response": response.text
+        }
+
+        if response.status_code == 200:
+            try:
+                json_data = response.json()
+                # Desanidar: la API devuelve {"oficina":{"oficina":[...]}}
+                if isinstance(json_data, dict) and "oficina" in json_data:
+                    oficinas = json_data["oficina"]
+                    if isinstance(oficinas, dict) and "oficina" in oficinas:
+                        resultado["data"] = oficinas["oficina"]
+                    else:
+                        resultado["data"] = oficinas
+                else:
+                    resultado["data"] = json_data
+            except:
+                resultado["data"] = None
+        else:
+            resultado["data"] = None
             import re
             fault_match = re.search(r'<faultstring>(.*?)</faultstring>', response.text)
             if fault_match:
