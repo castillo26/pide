@@ -1,9 +1,38 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import os
+from dotenv import load_dotenv
 
-from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_VDRPVExtra, consultar_vasirsarp, consultar_bpjrsocial
+from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_VDRPVExtra, consultar_vasirsarp,consultar_goficina, consultar_bpjrsocial
+
+load_dotenv()
+
+
+def login_view(request):
+    if request.method == 'POST':
+        usuario = request.POST.get('usuario', '')
+        password = request.POST.get('password', '')
+
+        login_usuario = os.getenv('LOGIN_USUARIO', '')
+        login_password = os.getenv('LOGIN_PASSWORD', '')
+
+        if usuario == login_usuario and password == login_password:
+            request.session['autenticado'] = True
+            return redirect('dashboard')
+        else:
+            return render(request, 'sunarp/login.html', {'error': 'Usuario o contraseña incorrectos'})
+
+    if request.session.get('autenticado', False):
+        return redirect('dashboard')
+
+    return render(request, 'sunarp/login.html')
+
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('login')
 
 
 def consulta_tsirsarp_form(request):
@@ -11,6 +40,12 @@ def consulta_tsirsarp_form(request):
     Muestra el formulario de consulta TSIRSARP
     """
     return render(request, 'sunarp/consulta.html')
+
+def dashboard(request):
+    """
+    Página principal con enlaces a todas las consultas
+    """
+    return render(request, 'sunarp/dashboard.html')
 
 
 def consulta_lasirsarp_form(request):
@@ -69,47 +104,6 @@ def consultar_vdrpvextra_view(request):
     )
 
     return JsonResponse(resultado, safe=False)
-
-
-@csrf_exempt
-def consultar_vasirsarp_view(request):
-    """
-    View para consultar el servicio LASIRSARP de SUNARP.
-
-    Método: POST
-    Body (JSON):
-    {
-
-    }
-    """
-    if request.method != "POST":
-        return JsonResponse({"error": "Solo metodo POST"}, status=405)
-
-    try:
-        data = json.loads(request.body)
-    except:
-        return JsonResponse({"error": "JSON invalido"}, status=400)
-
-    resultado = consultar_lasirsarp(
-        usuario=data.get("usuario", ""),
-        clave=data.get("clave", ""),
-        transacion=data.get("transacion", ""),
-        idimg=data.get("idimg", ""),
-        tipo=data.get("tipo", ""),
-        nrototalpag=data.get("nrototalpag", ""),
-        nropagref=data.get("nropagref", ""),
-        pagina=data.get("pagina", "")
-    )
-
-    return JsonResponse(resultado, safe=False)
-
-
-
-def consulta_vasirsarp_form(request):
-    """
-    Muestra el formulario de consulta VASIRSARP
-    """
-    return render(request, 'sunarp/consulta_vasirsarp.html')
 
 
 @csrf_exempt
@@ -261,3 +255,29 @@ def consulta_goficina_form(request):
     return render(request, 'sunarp/consulta_goficina.html')
 
 
+@csrf_exempt
+def consultar_goficina_view(request):
+    """
+    View para consultar el servicio GOFICINA de SUNARP.
+
+    Método: POST
+    Body (JSON):
+    {
+        "usuario": "tu_usuario",    // opcional, usa .env si no se envía
+        "clave": "tu_clave"         // opcional, usa .env si no se envía
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_goficina(
+        usuario=data.get("usuario", ""),
+        clave=data.get("clave", "")
+    )
+
+    return JsonResponse(resultado, safe=False)
