@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUNARP - Consultas</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header-bar">
+            <h1>Consultas SUNARP</h1>
+            <a href="{% url 'logout' %}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+        <p class="subtitle">Seleccione el tipo de consulta</p>
+
+        <div class="cards-grid">
+            <a href="{% url 'consulta_tsirsarp_form' %}" class="card">
+                <div class="card-icon">👤</div>
+                <h2>TSIRSARP</h2>
+                <p>Búsqueda de Titularidad</p>
+                <span class="card-desc">Buscar por persona natural o jurídica</span>
+            </a>
+
+            <a href="{% url 'consulta_lasirsarp_form' %}" class="card">
+                <div class="card-icon">📋</div>
+                <h2>LASIRSARP</h2>
+                <p>Listar Asientos Registrales</p>
+                <span class="card-desc">Ver asientos de una partida registral</span>
+            </a>
+
+            <a href="{% url 'consulta_vasirsarp_form' %}" class="card">
+                <div class="card-icon">🖼️</div>
+                <h2>VASIRSARP</h2>
+                <p>Visualizar Asiento Registral</p>
+                <span class="card-desc">Ver imagen del asiento registral</span>
+            </a>
+
+            <a href="{% url 'consulta_vdrpvextra_form' %}" class="card">
+                <div class="card-icon">🚗</div>
+                <h2>VDRPVExtra</h2>
+                <p>Consulta de Vehículo</p>
+                <span class="card-desc">Buscar por placa de vehículo</span>
+            </a>
+
+            <a href="{% url 'consulta_bpjrsocial_form' %}" class="card">
+                <div class="card-icon">🏢</div>
+                <h2>BPJRSocial</h2>
+                <p>Persona Jurídica</p>
+                <span class="card-desc">Buscar por razón social</span>
+            </a>
+
+            <a href="{% url 'consulta_goficina_form' %}" class="card">
+                <div class="card-icon">🏛️</div>
+                <h2>GOOficina</h2>
+                <p>Oficinas Registrales</p>
+                <span class="card-desc">Listar oficinas registrales</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

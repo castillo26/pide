@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta SUNARP - VDRPVExtra</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+</head>
+<body>
+    <h1>Consulta SUNARP - VDRPVExtra</h1>
+    <p class="subtitle">Consulta de Placa de Vehículo</p>
+
+    <div class="form-container">
+        <form id="consultaForm">
+            <div class="row">
+                <div class="col form-group">
+                    <label for="zona">Zona Registral:</label>
+                    <input type="text" id="zona" name="zona" placeholder="Ej: 1" required>
+                </div>
+                <div class="col form-group">
+                    <label for="oficina">Oficina Registral:</label>
+                    <input type="text" id="oficina" name="oficina" placeholder="Ej: 1" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="placa">Placa de Vehículo:</label>
+                <input type="text" id="placa" name="placa" placeholder="Ej: ABC123" required>
+                <small class="help-text">Placa del vehículo a consultar</small>
+            </div>
+
+            <button type="submit" id="btnConsultar">
+                Consultar Vehículo
+            </button>
+        </form>
+    </div>
+
+    <div id="resultado" class="resultado">
+        <h3 id="resultadoTitulo"></h3>
+        <div id="resultadoContenido"></div>
+    </div>
+
+    <script src="{% static 'sunarp/js/vdrpvextra.js' %}"></script>
+</body>
+</html>

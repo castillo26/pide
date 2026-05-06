@@ -1,9 +1,38 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import os
+from dotenv import load_dotenv
 
-from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_vasirsarp, consultar_goficina
+from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_VDRPVExtra, consultar_vasirsarp,consultar_goficina, consultar_bpjrsocial
+
+load_dotenv()
+
+
+def login_view(request):
+    if request.method == 'POST':
+        usuario = request.POST.get('usuario', '')
+        password = request.POST.get('password', '')
+
+        login_usuario = os.getenv('LOGIN_USUARIO', '')
+        login_password = os.getenv('LOGIN_PASSWORD', '')
+
+        if usuario == login_usuario and password == login_password:
+            request.session['autenticado'] = True
+            return redirect('dashboard')
+        else:
+            return render(request, 'sunarp/login.html', {'error': 'Usuario o contraseña incorrectos'})
+
+    if request.session.get('autenticado', False):
+        return redirect('dashboard')
+
+    return render(request, 'sunarp/login.html')
+
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('login')
 
 
 def consulta_tsirsarp_form(request):
@@ -12,6 +41,12 @@ def consulta_tsirsarp_form(request):
     """
     return render(request, 'sunarp/consulta.html')
 
+def dashboard(request):
+    """
+    Página principal con enlaces a todas las consultas
+    """
+    return render(request, 'sunarp/dashboard.html')
+
 
 def consulta_lasirsarp_form(request):
     """
@@ -19,12 +54,56 @@ def consulta_lasirsarp_form(request):
     """
     return render(request, 'sunarp/consulta_lasirsarp.html')
 
-
 def consulta_vasirsarp_form(request):
     """
-    Muestra el formulario de consulta VASIRSARP
+    Muestra el formulario de consulta LASIRSARP
     """
     return render(request, 'sunarp/consulta_vasirsarp.html')
+
+def consulta_vdrpvextra_form(request):
+    """
+    Muestra el formulario de consulta VDRPVExtra
+    """
+    return render(request, 'sunarp/consulta_vdrpvextra.html')
+
+def consulta_bpjrsocial_form(request):
+    """
+    Muestra el formulario de consulta BPJRSocial
+    """
+    return render(request, 'sunarp/consulta_bpjrsocial.html')
+
+@csrf_exempt
+def consultar_vdrpvextra_view(request):
+    """
+    View para consultar el servicio VDRPVExtra de SUNARP.
+
+    Método: POST
+    Body (JSON):
+    {
+        "usuario": "tu_usuario",
+        "clave": "tu_clave",
+        "zona": "1",
+        "oficina": "1",
+        "placa": "ABC123"
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_VDRPVExtra(
+        usuario=data.get("usuario", ""),
+        clave=data.get("clave", ""),
+        zona=data.get("zona", ""),
+        oficina=data.get("oficina", ""),
+        placa=data.get("placa", ""),
+    )
+
+    return JsonResponse(resultado, safe=False)
 
 
 @csrf_exempt
@@ -58,6 +137,36 @@ def consultar_lasirsarp_view(request):
         oficina=data.get("oficina", ""),
         partida=data.get("partida", ""),
         registro=data.get("registro", "")
+    )
+
+    return JsonResponse(resultado, safe=False)
+
+
+@csrf_exempt
+def consultar_bpjrsocial_view(request):
+    """
+    View para consultar el servicio BPJRSocial de SUNARP.
+
+    Método: POST
+    Body (JSON):
+    {
+        "usuario": "tu_usuario",
+        "clave": "tu_clave",
+        "razon_social": "EMPRESA SAC"
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_bpjrsocial(
+        usuario=data.get("usuario", ""),
+        clave=data.get("clave", ""),
+        razon_social=data.get("razon_social", "")
     )
 
     return JsonResponse(resultado, safe=False)
