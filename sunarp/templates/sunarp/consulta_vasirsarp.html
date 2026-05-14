@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
 </head>
 <body>
-    <h1>Consulta SUNARP - VASIRSARP</h1>
+    <div class="header-bar">
+        <h1>Consulta SUNARP - VASIRSARP</h1>
+        <a href="{% url 'dashboard' %}" class="btn-back">Volver al Dashboard</a>
+    </div>
     <p class="subtitle">Visualizar Asiento Registral - Imagen</p>
 
     <div class="form-container">
@@ -41,15 +44,12 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="pagina">Número de Página:</label>
-                <input type="text" id="pagina" name="pagina" placeholder="Ej: 1" required>
-                <small class="help-text">Obtenido del método LASIRSARP</small>
-            </div>
-
             <button type="submit" id="btnConsultar">
-                Ver Imagen
+                Ver todas las imágenes
             </button>
+            <p class="help-text" style="text-align:center;margin-top:10px;font-size:13px;color:#888;">
+                Se cargarán automáticamente todas las páginas (1 a N) con 2 segundos de espera entre cada consulta.
+            </p>
         </form>
     </div>
 
@@ -58,6 +58,7 @@
         <div id="resultadoContenido"></div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="{% static 'sunarp/js/vasirsarp.js' %}"></script>
 </body>
 </html>

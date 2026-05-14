@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
 </head>
 <body>
-    <h1>Consulta SUNARP - GOFICINA</h1>
+    <div class="header-bar">
+        <h1>Consulta SUNARP - GOFICINA</h1>
+        <a href="{% url 'dashboard' %}" class="btn-back">Volver al Dashboard</a>
+    </div>
     <p class="subtitle">Listar Oficinas Registrales</p>
 
     <div class="form-container">
