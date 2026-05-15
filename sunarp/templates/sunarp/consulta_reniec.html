@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta RENIEC - DNI</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+</head>
+<body>
+    <div class="header-bar">
+        <h1>Consulta RENIEC - DNI</h1>
+        <a href="{% url 'dashboard' %}" class="btn-back">Volver al Dashboard</a>
+    </div>
+    <p class="subtitle">Consulta de datos por número de DNI</p>
+
+    <div class="form-container">
+        <form id="consultaForm">
+            <div class="form-group">
+                <label for="dni">Número de DNI:</label>
+                <input type="text" id="dni" name="dni" placeholder="Ej: 12345678" required pattern="\d{8}" maxlength="8" inputmode="numeric">
+                <small class="help-text">Ingrese los 8 dígitos del DNI</small>
+            </div>
+
+            <button type="submit" id="btnConsultar">
+                Consultar DNI
+            </button>
+        </form>
+    </div>
+
+    <div id="resultado" class="resultado">
+        <h3 id="resultadoTitulo"></h3>
+        <div id="resultadoContenido"></div>
+    </div>
+
+    <script src="{% static 'sunarp/js/reniec.js' %}"></script>
+</body>
+</html>

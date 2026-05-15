@@ -17,4 +17,7 @@ urlpatterns = [
     path('consulta-bpjrsocial/', views.consulta_bpjrsocial_form, name='consulta_bpjrsocial_form'),
     path('goficina/', views.consultar_goficina_view, name='consultar_goficina'),
     path('consulta-goficina/', views.consulta_goficina_form, name='consulta_goficina_form'),
+    path('reniec/', views.consultar_reniec_view, name='consultar_reniec'),
+    path('consulta-reniec/', views.consulta_reniec_form, name='consulta_reniec_form'),
+    path('consulta-reniec-masivo/', views.consulta_reniec_masiva_form, name='consulta_reniec_masiva_form'),
 ]
