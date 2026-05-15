@@ -392,11 +392,11 @@ def consultar_reniec(
     - password: Password proporcionado por RENIEC (opcional, usa .env)
     """
     if not nu_dni_usuario:
-        nu_dni_usuario = os.getenv("SUNARP_DNI_USUARIO", "")
+        nu_dni_usuario = os.getenv("RENIEC_DNI_USUARIO", "")
     if not nu_ruc_usuario:
-        nu_ruc_usuario = os.getenv("SUNARP_RUC_USUARIO", "")
+        nu_ruc_usuario = os.getenv("RENIEC_RUC_USUARIO", "")
     if not password:
-        password = os.getenv("SUNARP_CLAVE", "")
+        password = os.getenv("RENIEC_CLAVE", "")
 
     url = "https://ws2.pide.gob.pe/Rest/RENIEC/Consultar"
 
