@@ -374,6 +374,73 @@ def consultar_bpjrsocial(
         return {"success": False, "error": str(e)}
 
 
+def consultar_reniec(
+    nu_dni_consulta: str = "",
+    nu_dni_usuario: str = None,
+    nu_ruc_usuario: str = None,
+    password: str = None
+):
+    """
+    Consulta al servicio RENIEC para obtener datos de una persona por DNI.
+
+    URL: https://ws2.pide.gob.pe/Rest/RENIEC/Consultar
+
+    Parámetros:
+    - nu_dni_consulta: Número de DNI a consultar (obligatorio)
+    - nu_dni_usuario: Usuario DNI proporcionado por RENIEC (opcional, usa .env)
+    - nu_ruc_usuario: RUC de usuario proporcionado por RENIEC (opcional, usa .env)
+    - password: Password proporcionado por RENIEC (opcional, usa .env)
+    """
+    if not nu_dni_usuario:
+        nu_dni_usuario = os.getenv("RENIEC_DNI_USUARIO", "")
+    if not nu_ruc_usuario:
+        nu_ruc_usuario = os.getenv("RENIEC_RUC_USUARIO", "")
+    if not password:
+        password = os.getenv("RENIEC_CLAVE", "")
+
+    url = "https://ws2.pide.gob.pe/Rest/RENIEC/Consultar"
+
+    params = {
+        "nuDniConsulta": nu_dni_consulta,
+        "nuDniUsuario": nu_dni_usuario,
+        "nuRucUsuario": nu_ruc_usuario,
+        "password": password,
+        "out": "json"
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=30)
+
+        resultado = {
+            "success": response.status_code == 200,
+            "status_code": response.status_code,
+            "response": response.text
+        }
+
+        if response.status_code == 200:
+            try:
+                resultado["data"] = response.json()
+            except:
+                resultado["data"] = None
+        else:
+            resultado["data"] = None
+            import re
+            fault_match = re.search(r'<faultstring>(.*?)</faultstring>', response.text)
+            if fault_match:
+                resultado["error"] = fault_match.group(1)
+            else:
+                resultado["error"] = f"Error HTTP {response.status_code}"
+
+        return resultado
+
+    except requests.exceptions.Timeout:
+        return {"success": False, "error": "Timeout: el servidor tardó demasiado en responder"}
+    except requests.exceptions.ConnectionError:
+        return {"success": False, "error": "Error de conexión: no se pudo contactar al servidor"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
 def consultar_goficina(
     usuario: str = None,
     clave: str = None

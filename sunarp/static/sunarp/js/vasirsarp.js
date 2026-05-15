@@ -1,4 +1,3 @@
-// Enviar formulario VASIRSARP
 document.getElementById('consultaForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -7,18 +6,23 @@ document.getElementById('consultaForm').addEventListener('submit', async functio
     const resultadoTitulo = document.getElementById('resultadoTitulo');
     const resultadoContenido = document.getElementById('resultadoContenido');
 
-    // Obtener valores del formulario
-    const data = {
+    const totalPag = parseInt(document.getElementById('nroTotalPag').value, 10);
+    if (!totalPag || totalPag < 1) {
+        resultadoDiv.style.display = 'block';
+        resultadoDiv.className = 'resultado error';
+        resultadoTitulo.textContent = 'Error';
+        resultadoContenido.innerHTML = '<p>Número total de páginas inválido.</p>';
+        return;
+    }
+
+    const baseData = {
         transaccion: document.getElementById('transaccion').value,
         idImg: document.getElementById('idImg').value,
         tipo: document.getElementById('tipo').value,
-        nroTotalPag: document.getElementById('nroTotalPag').value,
         nroPagRef: document.getElementById('nroPagRef').value,
-        pagina: document.getElementById('pagina').value
     };
 
-    // Validar que todos los campos tengan valor
-    if (!data.transaccion || !data.idImg || !data.tipo || !data.nroTotalPag || !data.nroPagRef || !data.pagina) {
+    if (!baseData.transaccion || !baseData.idImg || !baseData.tipo || !baseData.nroPagRef) {
         resultadoDiv.style.display = 'block';
         resultadoDiv.className = 'resultado error';
         resultadoTitulo.textContent = 'Error';
@@ -26,32 +30,29 @@ document.getElementById('consultaForm').addEventListener('submit', async functio
         return;
     }
 
-    // Mostrar estado de carga
     btn.disabled = true;
     btn.textContent = 'Consultando...';
-    resultadoDiv.style.display = 'none';
+    resultadoDiv.style.display = 'block';
+    resultadoDiv.className = 'resultado success';
+    resultadoTitulo.textContent = 'Cargando páginas...';
+    resultadoContenido.innerHTML = '';
 
-    try {
-        const response = await fetch('/sunarp/vasirsarp/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
+    const imagenes = [];
 
-        const resultado = await response.json();
+    for (let pagina = 1; pagina <= totalPag; pagina++) {
+        resultadoTitulo.textContent = `Cargando página ${pagina} de ${totalPag}...`;
 
-        resultadoDiv.style.display = 'block';
+        try {
+            const response = await fetch('/sunarp/vasirsarp/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...baseData, nroTotalPag: String(totalPag), pagina: String(pagina) })
+            });
 
-        if (resultado.success) {
-            resultadoDiv.className = 'resultado success';
-            resultadoTitulo.textContent = 'Consulta Exitosa';
+            const resultado = await response.json();
 
-            if (resultado.data) {
-                // La respuesta viene en verAsientoSIRSARPResponse
+            if (resultado.success && resultado.data) {
                 let imgBase64 = null;
-
                 if (resultado.data.verAsientoSIRSARPResponse) {
                     imgBase64 = resultado.data.verAsientoSIRSARPResponse.img;
                 } else if (resultado.data.img) {
@@ -59,32 +60,69 @@ document.getElementById('consultaForm').addEventListener('submit', async functio
                 }
 
                 if (imgBase64) {
-                    resultadoContenido.innerHTML = `
-                        <div class="imagen-container">
-                            <img src="data:image/jpeg;base64,${imgBase64}" alt="Asiento Registral" style="max-width: 100%; height: auto;">
-                        </div>
-                    `;
+                    imagenes.push({ pagina, img: imgBase64 });
                 } else {
-                    resultadoContenido.innerHTML = '<pre>' + JSON.stringify(resultado.data, null, 2) + '</pre>';
+                    imagenes.push({ pagina, error: 'No se encontró imagen en la respuesta', raw: resultado.data });
                 }
             } else {
-                resultadoContenido.innerHTML = '<pre>' + JSON.stringify(resultado, null, 2) + '</pre>';
+                imagenes.push({ pagina, error: resultado.error || 'Error en la consulta' });
             }
-        } else {
-            resultadoDiv.className = 'resultado error';
-            resultadoTitulo.textContent = 'Error en la consulta';
-            resultadoContenido.innerHTML = '<p>' + (resultado.error || 'Error desconocido') + '</p>';
-            if (resultado.response) {
-                resultadoContenido.innerHTML += '<details><summary>Respuesta del servidor</summary><pre>' + resultado.response + '</pre></details>';
-            }
+        } catch (error) {
+            imagenes.push({ pagina, error: 'Error de conexión: ' + error.message });
         }
-    } catch (error) {
-        resultadoDiv.style.display = 'block';
-        resultadoDiv.className = 'resultado error';
-        resultadoTitulo.textContent = 'Error';
-        resultadoContenido.innerHTML = '<p>Error de conexión: ' + error.message + '</p>';
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Ver Imagen';
+
+        if (pagina < totalPag) {
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
     }
+
+    resultadoTitulo.textContent = 'Consulta Exitosa';
+
+    if (imagenes.length === 0) {
+        resultadoDiv.className = 'resultado error';
+        resultadoTitulo.textContent = 'Sin resultados';
+        resultadoContenido.innerHTML = '<p>No se obtuvieron imágenes.</p>';
+    } else {
+        let html = '';
+        imagenes.forEach((item) => {
+            html += `<div class="data-item"><h4>Página ${item.pagina}</h4>`;
+            if (item.img) {
+                html += `<img src="data:image/jpeg;base64,${item.img}" alt="Página ${item.pagina}" style="max-width:100%;height:auto;">`;
+            } else {
+                html += `<p class="error">${item.error || 'Error desconocido'}</p>`;
+                if (item.raw) {
+                    html += `<pre>${JSON.stringify(item.raw, null, 2)}</pre>`;
+                }
+            }
+            html += '</div>';
+        });
+        html += '<div style="text-align:center;margin-top:20px;">';
+        html += '<button id="btnDescargarPDF" style="background:#28a745;max-width:300px;margin:0 auto;">Descargar PDF</button>';
+        html += '</div>';
+        resultadoContenido.innerHTML = html;
+
+        document.getElementById('btnDescargarPDF').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('landscape');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            imagenes.forEach((item, index) => {
+                if (index > 0) pdf.addPage();
+                if (item.img) {
+                    const imgData = 'data:image/jpeg;base64,' + item.img;
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const imgWidth = pageWidth - 20;
+                    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                    const yOffset = (pageHeight - imgHeight) / 2;
+                    pdf.addImage(imgData, 'JPEG', 10, yOffset, imgWidth, imgHeight);
+                }
+            });
+
+            pdf.save(`vasirsarp_${baseData.transaccion}.pdf`);
+        });
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Ver todas las imágenes';
 });

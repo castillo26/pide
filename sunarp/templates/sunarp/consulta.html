@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
 </head>
 <body>
-    <h1>Consulta SUNARP - TSIRSARP</h1>
+    <div class="header-bar">
+        <h1>Consulta SUNARP - TSIRSARP</h1>
+        <a href="{% url 'dashboard' %}" class="btn-back">Volver al Dashboard</a>
+    </div>
 
     <div class="form-container">
         <form id="consultaForm">

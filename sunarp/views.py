@@ -5,7 +5,7 @@ import json
 import os
 from dotenv import load_dotenv
 
-from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_VDRPVExtra, consultar_vasirsarp,consultar_goficina, consultar_bpjrsocial
+from .services import consultar_tsirsarp, consultar_lasirsarp, consultar_VDRPVExtra, consultar_vasirsarp,consultar_goficina, consultar_bpjrsocial, consultar_reniec
 
 load_dotenv()
 
@@ -243,6 +243,46 @@ def consultar_vasirsarp_view(request):
         nroTotalPag=data.get("nroTotalPag", ""),
         nroPagRef=data.get("nroPagRef", ""),
         pagina=data.get("pagina", "")
+    )
+
+    return JsonResponse(resultado, safe=False)
+
+
+def consulta_reniec_form(request):
+    """
+    Muestra el formulario de consulta RENIEC (individual)
+    """
+    return render(request, 'sunarp/consulta_reniec.html')
+
+
+def consulta_reniec_masiva_form(request):
+    """
+    Muestra el formulario de consulta RENIEC masiva (desde Excel)
+    """
+    return render(request, 'sunarp/consulta_reniec_masiva.html')
+
+
+@csrf_exempt
+def consultar_reniec_view(request):
+    """
+    View para consultar el servicio RENIEC por DNI.
+
+    Método: POST
+    Body (JSON):
+    {
+        "dni": "12345678"
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Solo metodo POST"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"error": "JSON invalido"}, status=400)
+
+    resultado = consultar_reniec(
+        nu_dni_consulta=data.get("dni", "")
     )
 
     return JsonResponse(resultado, safe=False)

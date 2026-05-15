@@ -39,6 +39,18 @@ h1 {
 .btn-logout:hover {
     background: #c82333;
 }
+.btn-back {
+    background: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+.btn-back:hover {
+    background: #5a6268;
+}
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));

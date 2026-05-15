@@ -16,46 +16,46 @@
         <p class="subtitle">Seleccione el tipo de consulta</p>
 
         <div class="cards-grid">
-            <a href="{% url 'consulta_tsirsarp_form' %}" class="card">
+            <a href="{% url 'consulta_tsirsarp_form' %}" target="_blank" class="card">
                 <div class="card-icon">👤</div>
                 <h2>TSIRSARP</h2>
                 <p>Búsqueda de Titularidad</p>
                 <span class="card-desc">Buscar por persona natural o jurídica</span>
             </a>
 
-            <a href="{% url 'consulta_lasirsarp_form' %}" class="card">
+            <a href="{% url 'consulta_lasirsarp_form' %}" target="_blank" class="card">
                 <div class="card-icon">📋</div>
                 <h2>LASIRSARP</h2>
                 <p>Listar Asientos Registrales</p>
                 <span class="card-desc">Ver asientos de una partida registral</span>
             </a>
 
-            <a href="{% url 'consulta_vasirsarp_form' %}" class="card">
+            <a href="{% url 'consulta_vasirsarp_form' %}" target="_blank" class="card">
                 <div class="card-icon">🖼️</div>
                 <h2>VASIRSARP</h2>
                 <p>Visualizar Asiento Registral</p>
                 <span class="card-desc">Ver imagen del asiento registral</span>
             </a>
 
-            <a href="{% url 'consulta_vdrpvextra_form' %}" class="card">
-                <div class="card-icon">🚗</div>
-                <h2>VDRPVExtra</h2>
-                <p>Consulta de Vehículo</p>
-                <span class="card-desc">Buscar por placa de vehículo</span>
-            </a>
-
-            <a href="{% url 'consulta_bpjrsocial_form' %}" class="card">
-                <div class="card-icon">🏢</div>
-                <h2>BPJRSocial</h2>
-                <p>Persona Jurídica</p>
-                <span class="card-desc">Buscar por razón social</span>
-            </a>
-
-            <a href="{% url 'consulta_goficina_form' %}" class="card">
+            <a href="{% url 'consulta_goficina_form' %}" target="_blank" class="card">
                 <div class="card-icon">🏛️</div>
                 <h2>GOOficina</h2>
                 <p>Oficinas Registrales</p>
                 <span class="card-desc">Listar oficinas registrales</span>
+            </a>
+
+            <a href="{% url 'consulta_reniec_form' %}" target="_blank" class="card">
+                <div class="card-icon">🪪</div>
+                <h2>RENIEC</h2>
+                <p>Consulta de DNI</p>
+                <span class="card-desc">Consultar datos por número de DNI</span>
+            </a>
+
+            <a href="{% url 'consulta_reniec_masiva_form' %}" target="_blank" class="card">
+                <div class="card-icon">📊</div>
+                <h2>RENIEC Masivo</h2>
+                <p>Consulta desde Excel</p>
+                <span class="card-desc">Consultar múltiples DNIs desde archivo Excel</span>
             </a>
         </div>
     </div>
