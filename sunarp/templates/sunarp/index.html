@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas SUNARP - PIDE</title>
+    <link rel="stylesheet" href="{% static 'sunarp/css/estilos.css' %}">
+    <style>
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .btn-consulta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-consulta:hover {
+            background-color: #0052a3;
+            transform: translateY(-2px);
+        }
+        .btn-consulta small {
+            display: block;
+            font-weight: normal;
+            font-size: 13px;
+            margin-top: 5px;
+            opacity: 0.85;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Consultas SUNARP - PIDE</h1>
+    <p class="subtitle">Seleccione el tipo de consulta que desea realizar</p>
+
+    <div class="form-container">
+        <div class="btn-grid">
+            <a href="{% url 'consulta_tsirsarp_form' %}" class="btn-consulta" target="_blank">
+                TSIRSARP
+                <small>Búsqueda de Titularidad</small>
+            </a>
+            <a href="{% url 'consulta_goficina_form' %}" class="btn-consulta" target="_blank">
+                GOFICINA
+                <small>Listar Oficinas Registrales</small>
+            </a>
+            <a href="{% url 'consulta_lasirsarp_form' %}" class="btn-consulta" target="_blank">
+                LASIRSARP
+                <small>Listar Asientos Registrales</small>
+            </a>
+            <a href="{% url 'consulta_vasirsarp_form' %}" class="btn-consulta" target="_blank">
+                VASIRSARP
+                <small>Visualizar Imagen de Asiento</small>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
